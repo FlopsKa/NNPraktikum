@@ -91,7 +91,7 @@ class Activation(object):
             raise ValueError('Unknown activation function: ' + activation)
 
     @staticmethod
-    def getDerivative(myfunc):
+    def get_derivative(myfunc):
         """
         Returns the derivative function corresponding to a given string which
         specify the activation function
