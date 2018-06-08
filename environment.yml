@@ -1,0 +1,6 @@
+name: nn_praktikum
+dependencies:
+  - python=2.7
+  - scikit-learn
+  - numpy
+  - matplotlib
