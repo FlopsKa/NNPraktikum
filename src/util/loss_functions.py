@@ -5,9 +5,9 @@
 Loss functions.
 """
 
+from abc import ABCMeta, abstractmethod, abstractproperty
 import numpy as np
 
-from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class Error:
@@ -24,7 +24,7 @@ class Error:
     def calculateError(self, target, output):
         # calculate the error between target and output
         pass
-        
+   
     @abstractmethod
     def calculateDerivative(self, target, output):
         # calculate the error between target and output
@@ -36,7 +36,7 @@ class AbsoluteError(Error):
     The Loss calculated by the number of differences between target and output
     """
     def errorString(self):
-        self.errorString = 'absolute'
+        self.error_string = 'absolute'
 
     def calculateError(self, target, output):
         # It is the numbers of differences between target and output
@@ -51,7 +51,7 @@ class DifferentError(Error):
     The Loss calculated by the number of differences between target and output
     """
     def errorString(self):
-        self.errorString = 'different'
+        self.error_string = 'different'
 
     def calculateError(self, target, output):
         # It is the numbers of differences between target and output
@@ -67,7 +67,7 @@ class MeanSquaredError(Error):
     target and output.
     """
     def errorString(self):
-        self.errorString = 'mse'
+        self.error_string = 'mse'
 
     def calculateError(self, target, output):
         # MSE = 1/n*sum (i=1 to n) of (target_i - output_i)^2)
@@ -86,7 +86,7 @@ class SumSquaredError(Error):
     target and output.
     """
     def errorString(self):
-        self.errorString = 'sse'
+        self.error_string = 'sse'
 
     def calculateError(self, target, output):
         # SSE = 1/2*sum (i=1 to n) of (target_i - output_i)^2)
@@ -103,10 +103,10 @@ class BinaryCrossEntropyError(Error):
     probabilistic output (BCE)
     """
     def errorString(self):
-        self.errorString = 'bce'
+        self.error_string = 'bce'
 
     def calculateError(self, target, output):
-        return np.sum(target*log(output) + (1-target)*log(1-output))
+        return np.sum(target*np.log(output) + (1-target)*np.log(1-output))
         
     def calculateDerivative(self, target, output):
         # BCEPrime = -target/output + (1-target)/(1-output)
@@ -119,10 +119,11 @@ class CrossEntropyError(Error):
     probabilistic distributions.
     """
     def errorString(self):
-        self.errorString = 'crossentropy'
+        self.error_string = 'crossentropy'
 
     def calculateError(self, target, output):
-        pass
+        return - np.mean(target*np.log(output) + (1-target)*(np.log(1-output)))
         
-    def calculateDerivativer(self, target, output):
-        pass
+    def calculateDerivative(self, target, output):
+        # factor x is missing
+        return np.mean(output - target)

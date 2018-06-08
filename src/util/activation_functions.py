@@ -4,6 +4,7 @@
 Activation functions which can be used within neurons.
 """
 
+import numpy as np
 from numpy import exp
 from numpy import divide
 from numpy import ones
@@ -63,50 +64,49 @@ class Activation(object):
 
     @staticmethod
     def softmax(net_output):
-        # Here you have to code the softmax function
-        pass
+        return exp(net_output) / np.sum(exp(net_output))
 
     @staticmethod
     def softmax_prime(net_output):
-        # Here you have to code the softmax function
-        pass
+        # case i != j is missing?!
+        return Activation.softmax(net_output) * (1 - Activation.softmax(net_output))
 
     @staticmethod
-    def get_activation(activation):
+    def get_activation(activation_func):
         """
         Returns the activation function corresponding to the given string
         """
 
-        if activation == 'sigmoid':
+        if activation_func == 'sigmoid':
             return Activation.sigmoid
-        elif activation == 'softmax':
+        elif activation_func == 'softmax':
             return Activation.softmax
-        elif activation == 'tanh':
+        elif activation_func == 'tanh':
             return Activation.tanh
-        elif activation == 'relu':
+        elif activation_func == 'relu':
             return Activation.rectified
-        elif activation == 'linear':
+        elif activation_func == 'linear':
             return Activation.identity
         else:
-            raise ValueError('Unknown activation function: ' + activation)
+            raise ValueError('Unknown activation function: ' + activation_func)
 
     @staticmethod
-    def get_derivative(myfunc):
+    def get_derivative(activation_func):
         """
         Returns the derivative function corresponding to a given string which
         specify the activation function
         """
 
-        if myfunc == 'sigmoid':
+        if activation_func == 'sigmoid':
             return Activation.sigmoid_prime
-        elif myfunc == 'softmax':
+        elif activation_func == 'softmax':
             return Activation.softmax_prime
-        elif myfunc == 'tanh':
+        elif activation_func == 'tanh':
             return Activation.tanh_prime
-        elif myfunc == 'relu':
+        elif activation_func == 'relu':
             return Activation.rectified_prime
-        elif myfunc == 'linear':
+        elif activation_func == 'linear':
             return Activation.identity_prime
         else:
             raise ValueError('Cannot get the derivative of'
-                             ' the activation function: ' + myfunc)
+                             ' the activation function: ' + activation_func)

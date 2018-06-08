@@ -11,16 +11,16 @@ class LogisticLayer(object):
 
     Parameters
     ----------
-    nIn: int: number of units from the previous layer (or input data)
-    nOut: int: number of units of the current layer (or output)
+    n_in: int: number of units from the previous layer (or input data)
+    n_out: int: number of units of the current layer (or output)
     activation: string: activation function of every units in the layer
     isClassifierLayer: bool:  to do classification or regression
 
     Attributes
     ----------
-    nIn : positive int:
+    n_in : positive int:
         number of units from the previous layer
-    nOut : positive int:
+    n_out : positive int:
         number of units of the current layer
     weights : ndarray
         weight matrix
@@ -44,7 +44,7 @@ class LogisticLayer(object):
         # Get activation function from string
         self.activation_string = activation
         self.activation = Activation.get_activation(self.activation_string)
-        self.activation_derivative = Activation.getDerivative(self.activation_string)
+        self.activation_derivative = Activation.get_derivative(self.activation_string)
 
         self.n_in = n_in
         self.n_out = n_out
@@ -134,7 +134,7 @@ class LogisticLayer(object):
         # else:
         #     self.deltas = self.outp * (1 - self.outp) * \
         #                   np.dot(next_derivatives, next_weights)
-        # Or you can have two computeDerivative methods, feel free to call
+        # Or you can have two compute_derivative methods, feel free to call
         # the other is computeOutputLayerDerivative or such.
         return self.deltas
 
