@@ -5,7 +5,7 @@ import numpy as np
 from util.activation_functions import Activation
 
 
-class LogisticLayer():
+class LogisticLayer(object):
     """
     A layer of neural
 
@@ -38,35 +38,34 @@ class LogisticLayer():
         shape of the layer, is also shape of the weight matrix
     """
 
-    def __init__(self, nIn, nOut, weights=None,
-                 activation='sigmoid', isClassifierLayer=False):
+    def __init__(self, n_in, n_out, weights=None,
+                 activation='sigmoid', is_classifier_layer=False):
 
         # Get activation function from string
-        self.activationString = activation
-        self.activation = Activation.getActivation(self.activationString)
-        self.activationDerivative = Activation.getDerivative(
-                                    self.activationString)
+        self.activation_string = activation
+        self.activation = Activation.getActivation(self.activation_string)
+        self.activation_derivative = Activation.getDerivative(self.activation_string)
 
-        self.nIn = nIn
-        self.nOut = nOut
+        self.n_in = n_in
+        self.n_out = n_out
 
-        self.inp = np.ndarray((nIn+1, 1))
+        self.inp = np.ndarray((n_in+1, 1))
         self.inp[0] = 1
-        self.outp = np.ndarray((nOut, 1))
-        self.deltas = np.zeros((nOut, 1))
+        self.outp = np.ndarray((n_out, 1))
+        self.deltas = np.zeros((n_out, 1))
 
         # You can have better initialization here
         if weights is None:
             rns = np.random.RandomState(int(time.time()))
-            self.weights = rns.uniform(size=(nIn + 1, nOut))-0.5
+            self.weights = rns.uniform(size=(n_in + 1, n_out))-0.5
         else:
-            assert(weights.shape == (nIn + 1, nOut))
+            assert weights.shape == (n_in + 1, n_out)
             self.weights = weights
 
-        self.isClassifierLayer = isClassifierLayer
+        self.is_classifier_layer = is_classifier_layer
 
         # Some handy properties of the layers
-        self.size = self.nOut
+        self.size = self.n_out
         self.shape = self.weights.shape
 
     def forward(self, inp):
@@ -91,7 +90,7 @@ class LogisticLayer():
 
         return outp
 
-    def computeDerivative(self, next_derivatives, next_weights):
+    def compute_derivative(self, next_derivatives, next_weights):
         """
         Compute the derivatives (backward)
 
@@ -124,7 +123,7 @@ class LogisticLayer():
 
         # Or even more general: doesn't care which activation function is used
         # dado: derivative of activation function w.r.t the output
-        dado = self.activationDerivative(self.outp)
+        dado = self.activation_derivative(self.outp)
         self.deltas = (dado * np.dot(next_derivatives, next_weights))
 
         # Or you can explicitly calculate the derivatives for two cases
@@ -139,17 +138,17 @@ class LogisticLayer():
         # the other is computeOutputLayerDerivative or such.
         return self.deltas
 
-    def updateWeights(self, learningRate):
+    def update_weights(self, learning_rate):
         """
         Update the weights of the layer
         """
 
         # weight updating as gradient descent principle
-        for neuron in range(0, self.nOut):
-            self.weights[:, neuron] -= (learningRate *
+        for neuron in range(0, self.n_out):
+            self.weights[:, neuron] -= (learning_rate *
                                         self.deltas[neuron] *
                                         self.inp)
-        
+
 
     def _fire(self, inp):
         return self.activation(np.dot(inp, self.weights))
