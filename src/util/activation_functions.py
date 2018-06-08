@@ -25,7 +25,7 @@ class Activation(object):
         return 1/(1+exp(-1.0*net_output))
 
     @staticmethod
-    def sigmoidPrime(net_output):
+    def sigmoid_prime(net_output):
         # Here you have to code the derivative of sigmoid function
         # netOutput.*(1-netOutput)
         return net_output * (1.0 - net_output)
@@ -38,26 +38,26 @@ class Activation(object):
         return divide(ex-exn, ex+exn)  # element-wise division
 
     @staticmethod
-    def tanhPrime(net_output):
+    def tanh_prime(net_output):
         # Here you have to code the derivative of tanh function
-        return (1-Activation.tanh(net_output)**2)
+        return 1-Activation.tanh(net_output)**2
 
     @staticmethod
     def rectified(net_output):
         return asarray([max(0.0, i) for i in net_output])
 
     @staticmethod
-    def rectifiedPrime(net_output):
+    def rectified_prime(net_output):
         # reluPrime=1 if netOutput > 0 otherwise 0
         #print(type(netOutput))
-        return net_output>0
+        return net_output > 0
 
     @staticmethod
     def identity(net_output):
         return net_output
 
     @staticmethod
-    def identityPrime(net_output):
+    def identity_prime(net_output):
         # identityPrime = 1
         return ones(net_output.size)
 
@@ -65,14 +65,14 @@ class Activation(object):
     def softmax(net_output):
         # Here you have to code the softmax function
         pass
-        
+
     @staticmethod
-    def softmaxPrime(net_output):
+    def softmax_prime(net_output):
         # Here you have to code the softmax function
         pass
-        
+
     @staticmethod
-    def getActivation(activation):
+    def get_activation(activation):
         """
         Returns the activation function corresponding to the given string
         """
@@ -98,15 +98,15 @@ class Activation(object):
         """
 
         if myfunc == 'sigmoid':
-            return Activation.sigmoidPrime
+            return Activation.sigmoid_prime
         elif myfunc == 'softmax':
-            return Activation.softmaxPrime
+            return Activation.softmax_prime
         elif myfunc == 'tanh':
-            return Activation.tanhPrime
+            return Activation.tanh_prime
         elif myfunc == 'relu':
-            return Activation.rectifiedPrime
+            return Activation.rectified_prime
         elif myfunc == 'linear':
-            return Activation.identityPrime
+            return Activation.identity_prime
         else:
             raise ValueError('Cannot get the derivative of'
                              ' the activation function: ' + myfunc)

@@ -43,7 +43,7 @@ class LogisticLayer(object):
 
         # Get activation function from string
         self.activation_string = activation
-        self.activation = Activation.getActivation(self.activation_string)
+        self.activation = Activation.get_activation(self.activation_string)
         self.activation_derivative = Activation.getDerivative(self.activation_string)
 
         self.n_in = n_in
