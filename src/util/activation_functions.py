@@ -10,103 +10,103 @@ from numpy import ones
 from numpy import asarray
 
 
-class Activation:
+class Activation(object):
     """
     Containing various activation functions and their derivatives
     """
 
     @staticmethod
-    def sign(netOutput, threshold=0):
-        return netOutput >= threshold
+    def sign(net_output, threshold=0):
+        return net_output >= threshold
 
     @staticmethod
-    def sigmoid(netOutput):
+    def sigmoid(net_output):
         # use e^x from numpy to avoid overflow
-        return 1/(1+exp(-1.0*netOutput))
+        return 1/(1+exp(-1.0*net_output))
 
     @staticmethod
-    def sigmoidPrime(netOutput):
+    def sigmoidPrime(net_output):
         # Here you have to code the derivative of sigmoid function
         # netOutput.*(1-netOutput)
-        return netOutput * (1.0 - netOutput)
+        return net_output * (1.0 - net_output)
 
     @staticmethod
-    def tanh(netOutput):
+    def tanh(net_output):
         # return 2*Activation.sigmoid(2*netOutput)-1
-        ex = exp(1.0*netOutput)
-        exn = exp(-1.0*netOutput)
+        ex = exp(1.0*net_output)
+        exn = exp(-1.0*net_output)
         return divide(ex-exn, ex+exn)  # element-wise division
 
     @staticmethod
-    def tanhPrime(netOutput):
+    def tanhPrime(net_output):
         # Here you have to code the derivative of tanh function
-        return (1-Activation.tanh(netOutput)**2)
+        return (1-Activation.tanh(net_output)**2)
 
     @staticmethod
-    def rectified(netOutput):
-        return asarray([max(0.0, i) for i in netOutput])
+    def rectified(net_output):
+        return asarray([max(0.0, i) for i in net_output])
 
     @staticmethod
-    def rectifiedPrime(netOutput):
+    def rectifiedPrime(net_output):
         # reluPrime=1 if netOutput > 0 otherwise 0
         #print(type(netOutput))
-        return netOutput>0
+        return net_output>0
 
     @staticmethod
-    def identity(netOutput):
-        return netOutput
+    def identity(net_output):
+        return net_output
 
     @staticmethod
-    def identityPrime(netOutput):
+    def identityPrime(net_output):
         # identityPrime = 1
-        return ones(netOutput.size)
+        return ones(net_output.size)
 
     @staticmethod
-    def softmax(netOutput):
+    def softmax(net_output):
         # Here you have to code the softmax function
         pass
         
     @staticmethod
-    def softmaxPrime(netOutput):
+    def softmaxPrime(net_output):
         # Here you have to code the softmax function
         pass
         
     @staticmethod
-    def getActivation(str):
+    def getActivation(activation):
         """
         Returns the activation function corresponding to the given string
         """
 
-        if str == 'sigmoid':
+        if activation == 'sigmoid':
             return Activation.sigmoid
-        elif str == 'softmax':
+        elif activation == 'softmax':
             return Activation.softmax
-        elif str == 'tanh':
+        elif activation == 'tanh':
             return Activation.tanh
-        elif str == 'relu':
+        elif activation == 'relu':
             return Activation.rectified
-        elif str == 'linear':
+        elif activation == 'linear':
             return Activation.identity
         else:
-            raise ValueError('Unknown activation function: ' + str)
+            raise ValueError('Unknown activation function: ' + activation)
 
     @staticmethod
-    def getDerivative(str):
+    def getDerivative(myfunc):
         """
         Returns the derivative function corresponding to a given string which
         specify the activation function
         """
 
-        if str == 'sigmoid':
+        if myfunc == 'sigmoid':
             return Activation.sigmoidPrime
-        elif str == 'softmax':
+        elif myfunc == 'softmax':
             return Activation.softmaxPrime
-        elif str == 'tanh':
+        elif myfunc == 'tanh':
             return Activation.tanhPrime
-        elif str == 'relu':
+        elif myfunc == 'relu':
             return Activation.rectifiedPrime
-        elif str == 'linear':
+        elif myfunc == 'linear':
             return Activation.identityPrime
         else:
             raise ValueError('Cannot get the derivative of'
-                             ' the activation function: ' + str)
+                             ' the activation function: ' + myfunc)
