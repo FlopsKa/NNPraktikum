@@ -46,7 +46,9 @@ class MultilayerPerceptron(Classifier):
         self.trainingSet = train
         self.validationSet = valid
         self.testSet = test
-        
+
+        self.last_layer_activations = np.array([])
+    
         if loss == 'bce':
             self.loss = BinaryCrossEntropyError()
         elif loss == 'sse':
@@ -57,6 +59,8 @@ class MultilayerPerceptron(Classifier):
             self.loss = DifferentError()
         elif loss == 'absolute':
             self.loss = AbsoluteError()
+        elif loss == 'ce':
+            self.loss = CrossEntropyError()
         else:
             raise ValueError('There is no predefined loss function ' +
                              'named ' + str)
@@ -116,9 +120,10 @@ class MultilayerPerceptron(Classifier):
         activations = inp
         for curr_layer in self.layers:
             activations = curr_layer.forward(activations)
-        
+
         self.last_layer_activations = activations
-        
+        return activations
+
     def _compute_error(self, target):
         """
         Compute the total error of the network (error terms from the output layer)
@@ -128,7 +133,7 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        pass
+        return self.loss.calculateError(target, self.last_layer_activations) 
     
     def _update_weights(self, learningRate):
         """
@@ -144,15 +149,18 @@ class MultilayerPerceptron(Classifier):
         verbose : boolean
             Print logging messages with validation accuracy if verbose is True.
         """
-        pass
-
-
+        error = np.zeros((10,1))
+        for x,y in zip(self.trainingSet.input,self.trainingSet.label):
+            e = np.zeros((10, 1))
+            e[y] = 1
+            self._feed_forward(x)
+            error += self._compute_error(e)
+        error = error / len(self.trainingSet.input)
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
         # You need to implement something here
         pass
-        
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
