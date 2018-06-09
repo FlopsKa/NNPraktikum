@@ -7,7 +7,6 @@ from model.classifier import Classifier
 
 from sklearn.metrics import accuracy_score
 
-import sys
 
 class MultilayerPerceptron(Classifier):
     """
@@ -66,15 +65,16 @@ class MultilayerPerceptron(Classifier):
         # e.g. plotting, reporting..
         self.performances = []
 
-        self.layers = layers
-
         # Build up the network from specific layers
         self.layers = []
 
         # Input layer
-        inputActivation = "sigmoid"
+        input_activation = "sigmoid"
         self.layers.append(LogisticLayer(train.input.shape[1], 128, 
-                           None, inputActivation, False))
+                           None, input_activation, False))
+
+        # add the layers from the argument
+        self.layers.append(layers)
 
         # Output layer
         outputActivation = "softmax"
@@ -112,6 +112,12 @@ class MultilayerPerceptron(Classifier):
         # Here you have to propagate forward through the layers
         # And remember the activation values of each layer
         """
+
+        activations = inp
+        for curr_layer in self.layers:
+            activations = curr_layer.forward(activations)
+        
+        self.last_layer_activations = activations
         
     def _compute_error(self, target):
         """
