@@ -69,7 +69,7 @@ class Activation(object):
     @staticmethod
     def softmax_prime(net_output):
         # case i != j is missing?!
-        return Activation.softmax(net_output) * (1 - Activation.softmax(net_output))
+        return net_output * (1.0 - net_output)
 
     @staticmethod
     def get_activation(activation_func):

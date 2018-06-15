@@ -12,27 +12,10 @@ from report.performance_plot import PerformancePlot
 
 
 def main():
-    data = MNISTSeven("../data/mnist_seven.csv", 2, 1000, 1000,
+    data = MNISTSeven("../data/mnist_seven.csv", 100, 1000, 1000,
                                                     oneHot=False)
-    # myStupidClassifier = StupidRecognizer(data.trainingSet,
-    #                                       data.validationSet,
-    #                                       data.testSet)
-    
-    # myPerceptronClassifier = Perceptron(data.trainingSet,
-    #                                     data.validationSet,
-    #                                     data.testSet,
-    #                                     learningRate=0.005,
-    #                                     epochs=30)
-                                        
-    # myLRClassifier = LogisticRegression(data.trainingSet,
-    #                                     data.validationSet,
-    #                                     data.testSet,
-    #                                     learningRate=0.005,
-    #                                     epochs=30)
 
-
-    myLayer = LogisticLayer(127,129)
-    myMLPClassifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, myLayer, loss='ce')
+    myMLPClassifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, loss='ce')
     myMLPClassifier.train()
                                         
     # Report the result #

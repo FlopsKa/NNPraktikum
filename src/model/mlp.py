@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from util.loss_functions import *
@@ -6,7 +5,6 @@ from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
 from sklearn.metrics import accuracy_score
-
 
 class MultilayerPerceptron(Classifier):
     """
@@ -16,7 +14,6 @@ class MultilayerPerceptron(Classifier):
     def __init__(self, train, valid, test, layers=None, inputWeights=None,
                  outputTask='classification', outputActivation='softmax',
                  loss='bce', learningRate=0.01, epochs=50):
-
         """
         A MNIST recognizer based on multi-layer perceptron algorithm
 
@@ -46,6 +43,8 @@ class MultilayerPerceptron(Classifier):
         self.trainingSet = train
         self.validationSet = valid
         self.testSet = test
+
+        self.error = np.zeros((10, 1))
 
         self.last_layer_activations = np.array([])
     
@@ -77,13 +76,14 @@ class MultilayerPerceptron(Classifier):
         self.layers.append(LogisticLayer(train.input.shape[1], 128, 
                            None, input_activation, False))
 
-        # add the layers from the argument
-        self.layers.append(layers)
-
+        hidden_ac = "sigmoid"
+        self.layers.append(LogisticLayer(128, 32, 
+                           None, hidden_ac, False))
+                           
         # Output layer
         outputActivation = "softmax"
-        self.layers.append(LogisticLayer(128, 10, 
-                           None, outputActivation, True))
+        self.layers.append(LogisticLayer(32, 10, 
+                           weights=None, activation=outputActivation, is_classifier_layer=True))
 
         self.inputWeights = inputWeights
 
@@ -120,9 +120,7 @@ class MultilayerPerceptron(Classifier):
         activations = inp
         for curr_layer in self.layers:
             activations = curr_layer.forward(activations)
-
-        self.last_layer_activations = activations
-        return activations
+            activations = np.insert(activations, 0 , 1)
 
     def _compute_error(self, target):
         """
@@ -133,14 +131,32 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        return self.loss.calculateError(target, self.last_layer_activations) 
+        return self.loss.calculateError(target, self._get_output_layer().outp) 
     
     def _update_weights(self, learningRate):
         """
         Update the weights of the layers by propagating back the error
         """
-        pass
+        for layer in self.layers:
+            layer.update_weights(self.learningRate)
+
         
+    def _backpropagate_error(self, target):
+        """
+        Perform the backpropagation of error through the network layers
+        """
+        # first deltas are the actual error gradients at the output layer
+        current_deltas = self.loss.calculateDerivative(target, self._get_output_layer().outp)
+        # identity matrix as required by the computeDerivative() function
+        current_weights = np.identity(self._get_output_layer().n_out)
+        # loop over reversed list since we have to start at the output layer
+        for layer in reversed(self.layers):
+            # get deltas of current layer
+            current_deltas = layer.compute_derivative(current_deltas, current_weights)
+            # remove bias weight since we don't need it here
+            current_weights = np.delete(layer.weights, 0, 0)
+
+
     def train(self, verbose=True):
         """Train the Multi-layer Perceptrons
 
@@ -149,18 +165,37 @@ class MultilayerPerceptron(Classifier):
         verbose : boolean
             Print logging messages with validation accuracy if verbose is True.
         """
-        error = np.zeros((10,1))
-        for x,y in zip(self.trainingSet.input,self.trainingSet.label):
-            e = np.zeros((10, 1))
-            e[y] = 1
-            self._feed_forward(x)
-            error += self._compute_error(e)
-        error = error / len(self.trainingSet.input)
+        for epoch in range(self.epochs):
+            if verbose:
+                print("Training epoch {0}/{1}.."
+                      .format(epoch + 1, self.epochs))
+
+            for img, label in zip(self.trainingSet.input, self.trainingSet.label):
+
+                # perform backpropagation
+                self._feed_forward(img)
+                self._backpropagate_error(np.array(label))
+                self._update_weights(self.learningRate)
+
+            if verbose:
+
+                accuracy = accuracy_score(self.validationSet.label,
+                                          self.evaluate(self.validationSet))
+                # Record the performance of each epoch for later usages
+                # e.g. plotting, reporting..
+                self.performances.append(accuracy)
+                print("Accuracy on validation: {0:.2f}%"
+                      .format(accuracy * 100))
+                print("-----------------------------")
+
+        pass
+
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
         # You need to implement something here
-        pass
+        self._feed_forward(test_instance)
+        return np.argmax(self._get_output_layer().outp)
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
