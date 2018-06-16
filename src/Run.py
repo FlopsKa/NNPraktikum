@@ -13,14 +13,15 @@ from report.performance_plot import PerformancePlot
 
 def main():
     data = MNISTSeven("../data/mnist_seven.csv", 100, 1000, 1000,
-                                                    oneHot=False)
+                      oneHot=False)
 
-    myMLPClassifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, loss='ce')
-    myMLPClassifier.train()
+    my_mlp_classifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, loss='ce',
+                                             epochs=200)
+    my_mlp_classifier.train()
                                         
     # Report the result #
     #print("=========================")
-    #evaluator = Evaluator()                                        
+    #evaluator = Evaluator()
 
     # Train the classifiers
     #print("=========================")
@@ -61,9 +62,9 @@ def main():
     #evaluator.printAccuracy(data.testSet, lrPred)
     
     # Draw
-    #plot = PerformancePlot("Logistic Regression validation")
-    #plot.draw_performance_epoch(myLRClassifier.performances,
-    #                            myLRClassifier.epochs)
+    plot = PerformancePlot("MLP validation")
+    plot.draw_performance_epoch(my_mlp_classifier.performances,
+                                my_mlp_classifier.epochs)
     
     
 if __name__ == '__main__':

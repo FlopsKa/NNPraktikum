@@ -89,3 +89,5 @@ ENV/
 .ropeproject
 .vscode/settings.json
 src/.vscode/launch.json
+
+.idea/

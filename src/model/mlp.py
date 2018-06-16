@@ -6,14 +6,15 @@ from model.classifier import Classifier
 
 from sklearn.metrics import accuracy_score
 
+
 class MultilayerPerceptron(Classifier):
     """
     A multilayer perceptron used for classification
     """
 
-    def __init__(self, train, valid, test, layers=None, inputWeights=None,
-                 outputTask='classification', outputActivation='softmax',
-                 loss='bce', learningRate=0.01, epochs=50):
+    def __init__(self, train, valid, test, layers=None, input_weights=None,
+                 output_task='classification', output_activation='softmax',
+                 loss='bce', learning_rate=0.01, epochs=50):
         """
         A MNIST recognizer based on multi-layer perceptron algorithm
 
@@ -22,7 +23,7 @@ class MultilayerPerceptron(Classifier):
         train : list
         valid : list
         test : list
-        learningRate : float
+        learning_rate : float
         epochs : positive int
 
         Attributes
@@ -30,15 +31,15 @@ class MultilayerPerceptron(Classifier):
         trainingSet : list
         validationSet : list
         testSet : list
-        learningRate : float
+        learning_rate : float
         epochs : positive int
         performances: array of floats
         """
 
-        self.learningRate = learningRate
+        self.learningRate = learning_rate
         self.epochs = epochs
-        self.outputTask = outputTask  # Either classification or regression
-        self.outputActivation = outputActivation
+        self.outputTask = output_task  # Either classification or regression
+        self.outputActivation = output_activation
 
         self.trainingSet = train
         self.validationSet = valid
@@ -73,27 +74,31 @@ class MultilayerPerceptron(Classifier):
 
         # Input layer
         input_activation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 128, 
+        n_out = layers[0].n_in if (layers is not None and len(layers) > 0) else 128
+        self.layers.append(LogisticLayer(train.input.shape[1], n_out,
                            None, input_activation, False))
 
+        # Add passed layers
+        if layers is not None:
+            self.layers += layers
+
         hidden_ac = "sigmoid"
-        self.layers.append(LogisticLayer(128, 32, 
+        self.layers.append(LogisticLayer(self.layers[-1].n_out, 32,
                            None, hidden_ac, False))
                            
         # Output layer
-        outputActivation = "softmax"
-        self.layers.append(LogisticLayer(32, 10, 
-                           weights=None, activation=outputActivation, is_classifier_layer=True))
+        output_activation = "softmax"
+        self.layers.append(LogisticLayer(32, 10,
+                                         weights=None, activation=output_activation, is_classifier_layer=True))
 
-        self.inputWeights = inputWeights
+        self.inputWeights = input_weights
 
         # add bias values ("1"s) at the beginning of all data sets
         self.trainingSet.input = np.insert(self.trainingSet.input, 0, 1,
-                                            axis=1)
+                                           axis=1)
         self.validationSet.input = np.insert(self.validationSet.input, 0, 1,
-                                              axis=1)
+                                             axis=1)
         self.testSet.input = np.insert(self.testSet.input, 0, 1, axis=1)
-
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -120,7 +125,7 @@ class MultilayerPerceptron(Classifier):
         activations = inp
         for curr_layer in self.layers:
             activations = curr_layer.forward(activations)
-            activations = np.insert(activations, 0 , 1)
+            activations = np.insert(activations, 0, 1)
 
     def _compute_error(self, target):
         """
@@ -133,14 +138,13 @@ class MultilayerPerceptron(Classifier):
         """
         return self.loss.calculateError(target, self._get_output_layer().outp) 
     
-    def _update_weights(self, learningRate):
+    def _update_weights(self, learning_rate):
         """
         Update the weights of the layers by propagating back the error
         """
         for layer in self.layers:
-            layer.update_weights(self.learningRate)
+            layer.update_weights(learning_rate)
 
-        
     def _backpropagate_error(self, target):
         """
         Perform the backpropagation of error through the network layers
@@ -155,7 +159,6 @@ class MultilayerPerceptron(Classifier):
             current_deltas = layer.compute_derivative(current_deltas, current_weights)
             # remove bias weight since we don't need it here
             current_weights = np.delete(layer.weights, 0, 0)
-
 
     def train(self, verbose=True):
         """Train the Multi-layer Perceptrons
@@ -174,7 +177,9 @@ class MultilayerPerceptron(Classifier):
 
                 # perform backpropagation
                 self._feed_forward(img)
-                self._backpropagate_error(np.array(label))
+                target = np.zeros((10,))
+                target[label] = 1
+                self._backpropagate_error(target)
                 self._update_weights(self.learningRate)
 
             if verbose:
@@ -187,9 +192,6 @@ class MultilayerPerceptron(Classifier):
                 print("Accuracy on validation: {0:.2f}%"
                       .format(accuracy * 100))
                 print("-----------------------------")
-
-        pass
-
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
