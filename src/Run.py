@@ -16,7 +16,7 @@ def main():
                       oneHot=False)
 
     my_mlp_classifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, loss='ce',
-                                             epochs=200)
+                                             epochs=100)
     my_mlp_classifier.train()
                                         
     # Report the result #
