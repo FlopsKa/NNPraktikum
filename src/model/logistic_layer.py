@@ -124,7 +124,7 @@ class LogisticLayer(object):
         # Or even more general: doesn't care which activation function is used
         # dado: derivative of activation function w.r.t the output
         dado = self.activation_derivative(self.outp)
-        prod = np.dot(next_derivatives, next_weights.T)
+        prod = np.dot(next_derivatives, next_weights)
         self.deltas = (dado * prod)
 
         # Or you can explicitly calculate the derivatives for two cases

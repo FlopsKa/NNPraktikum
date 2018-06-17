@@ -152,13 +152,13 @@ class MultilayerPerceptron(Classifier):
         # first deltas are the actual error gradients at the output layer
         current_deltas = self.loss.calculateDerivative(target, self._get_output_layer().outp)
         # identity matrix as required by the computeDerivative() function
-        current_weights = np.identity(self._get_output_layer().n_out)
+        current_weights = 1.0
         # loop over reversed list since we have to start at the output layer
         for layer in reversed(self.layers):
             # get deltas of current layer
             current_deltas = layer.compute_derivative(current_deltas, current_weights)
             # remove bias weight since we don't need it here
-            current_weights = np.delete(layer.weights, 0, 0)
+            current_weights = layer.weights[1:,:].T
 
     def train(self, verbose=True):
         """Train the Multi-layer Perceptrons
