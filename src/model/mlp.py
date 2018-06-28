@@ -63,7 +63,7 @@ class MultilayerPerceptron(Classifier):
             self.loss = CrossEntropyError()
         else:
             raise ValueError('There is no predefined loss function ' +
-                             'named ' + str)
+                             'named ' + loss)
 
         # Record the performance of each epoch for later usages
         # e.g. plotting, reporting..
@@ -75,8 +75,8 @@ class MultilayerPerceptron(Classifier):
         # Input layer
         input_activation = "sigmoid"
         n_out = layers[0].n_in if (layers is not None and len(layers) > 0) else 128
-        self.layers.append(LogisticLayer(train.input.shape[1], n_out,
-                           None, input_activation, False))
+        self.layers.append(LogisticLayer(train.input.shape[1], n_out, activation=input_activation,
+                                         is_classifier_layer=False))
 
         # Add passed layers
         if layers is not None:
