@@ -16,50 +16,23 @@ def main():
                       oneHot=False)
 
     my_mlp_classifier = MultilayerPerceptron(data.trainingSet, data.validationSet, data.testSet, loss='ce',
-                                             epochs=100)
-    my_mlp_classifier.train()
-                                        
-    # Report the result #
-    #print("=========================")
-    #evaluator = Evaluator()
+                                             epochs=150, learning_rate=0.03)
+
+    print("=========================")
 
     # Train the classifiers
-    #print("=========================")
-    #print("Training..")
+    print("\nTraining MLP classifier...")
+    my_mlp_classifier.train()
+    print("Finished training...")
 
-    #print("\nStupid Classifier has been training..")
-    #myStupidClassifier.train()
-    #print("Done..")
+    mlp_pred = my_mlp_classifier.evaluate()
 
-    #print("\nPerceptron has been training..")
-    #myPerceptronClassifier.train()
-    #print("Done..")
-    
-    #print("\nLogistic Regression has been training..")
-    #myLRClassifier.train()
-    #print("Done..")
-
-    # Do the recognizer
-    # Explicitly specify the test set to be evaluated
-    #stupidPred = myStupidClassifier.evaluate()
-    #perceptronPred = myPerceptronClassifier.evaluate()
-    #lrPred = myLRClassifier.evaluate()
-    
     # Report the result
-    #print("=========================")
-    #evaluator = Evaluator()
-
-    #print("Result of the stupid recognizer:")
-    #evaluator.printComparison(data.testSet, stupidPred)
-    #evaluator.printAccuracy(data.testSet, stupidPred)
-
-    #print("\nResult of the Perceptron recognizer:")
-    #evaluator.printComparison(data.testSet, perceptronPred)
-    #evaluator.printAccuracy(data.testSet, perceptronPred)
-    
-    #print("\nResult of the Logistic Regression recognizer:")
-    #evaluator.printComparison(data.testSet, lrPred)    
-    #evaluator.printAccuracy(data.testSet, lrPred)
+    print("=========================")
+    evaluator = Evaluator()
+    print("\nResult of the MLP recognizer:")
+    #evaluator.printComparison(data.testSet, mlp_pred)
+    evaluator.printAccuracy(data.testSet, mlp_pred)
     
     # Draw
     plot = PerformancePlot("MLP validation")
